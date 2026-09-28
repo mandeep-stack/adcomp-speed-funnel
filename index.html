@@ -811,6 +811,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       errorEl.style.display = 'block';
       return;
     }
+    if(!_awTSToken){
+      errorEl.textContent = 'Please complete the verification checkbox above.';
+      errorEl.style.display = 'block';
+      return;
+    }
 
     btn.disabled = true;
     btn.textContent = 'Sending…';
