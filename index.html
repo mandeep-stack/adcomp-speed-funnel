@@ -1,0 +1,902 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Website Speed &amp; Security Fix — AdComp</title>
+<meta name="description" content="Free website speed check + guaranteed 90+ PageSpeed fix for WordPress sites running ads.">
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-W95RB6L');</script>
+<!-- End Google Tag Manager -->
+
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+<style>
+/* ── RESET + ROOT ─────────────────────────────────── */
+#adcomp-ws *,#adcomp-ws *::before,#adcomp-ws *::after{box-sizing:border-box;margin:0;padding:0}
+#adcomp-ws{
+  --ink:#111110;
+  --ink2:#4A4A48;
+  --ink3:#9A9A97;
+  --bg:#F7F6F3;
+  --surface:#FFFFFF;
+  --border:#E5E4E0;
+  --red:#D63B3B;
+  --red-bg:#FDF0F0;
+  --red-border:#F5CCCC;
+  --green:#16A37A;
+  --green-bg:#EBF8F3;
+  --green-border:#A8E6D0;
+  --amber:#C87414;
+  --amber-bg:#FEF6E8;
+  --amber-border:#F5DCAA;
+  --r:12px;
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  font-size:16px;
+  line-height:1.6;
+  color:var(--ink);
+  background:var(--bg);
+  -webkit-font-smoothing:antialiased;
+}
+html,body{margin:0;padding:0;background:#F7F6F3}
+
+/* ── LAYOUT ───────────────────────────────────────── */
+#adcomp-ws{width:100%;display:block;overflow-x:hidden}
+#adcomp-ws .aw-inner{max-width:720px;margin:0 auto;padding:0 20px}
+#adcomp-ws section{padding:56px 20px;max-width:720px;margin:0 auto}
+#adcomp-ws hr{border:none;border-top:1px solid var(--border)}
+
+#adcomp-ws .aw-nav{display:none}
+
+/* ── HERO ─────────────────────────────────────────── */
+#adcomp-ws .aw-hero{padding-top:48px;padding-bottom:28px;max-width:720px;margin:0 auto;padding-left:20px;padding-right:20px}
+#adcomp-ws .aw-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--red-bg);color:var(--red);
+  border:1px solid var(--red-border);
+  border-radius:100px;padding:5px 13px;
+  font-size:12px;font-weight:600;letter-spacing:0.03em;
+  margin-bottom:24px;
+}
+#adcomp-ws .aw-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0}
+#adcomp-ws .aw-h1{
+  font-size:clamp(28px,7vw,58px);
+  font-weight:900;line-height:1.08;
+  letter-spacing:clamp(-1px,-0.03em,-2px);margin-bottom:18px;color:var(--ink);
+}
+#adcomp-ws .aw-h1 span{color:var(--red)}
+#adcomp-ws .aw-hero-sub{
+  font-size:17px;color:var(--ink2);line-height:1.7;
+  margin-bottom:36px;max-width:540px;
+}
+
+/* ── REPORT TOOL ──────────────────────────────────── */
+#adcomp-ws .aw-tool{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:28px;margin-bottom:16px;
+}
+#adcomp-ws .aw-tool h3{font-size:16px;font-weight:700;margin-bottom:5px}
+#adcomp-ws .aw-tool-sub{font-size:13px;color:var(--ink2);margin-bottom:18px}
+#adcomp-ws .aw-url-row{display:flex;gap:10px;flex-wrap:wrap}
+#adcomp-ws .aw-url-input{
+  flex:1;min-width:180px;
+  border:1.5px solid var(--border);border-radius:8px;
+  padding:11px 14px;font-size:14px;
+  background:var(--bg);color:var(--ink);
+  outline:none;transition:border-color .2s;
+  font-family:inherit;
+}
+#adcomp-ws .aw-url-input:focus{border-color:var(--ink)}
+#adcomp-ws .aw-check-btn{
+  background:var(--ink);color:#fff;
+  border:none;border-radius:8px;
+  padding:11px 22px;font-size:14px;font-weight:600;
+  cursor:pointer;white-space:nowrap;
+  transition:opacity .2s;font-family:inherit;
+}
+#adcomp-ws .aw-check-btn:hover{opacity:.85}
+#adcomp-ws .aw-check-btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* ── SCORE RESULT ─────────────────────────────────── */
+#adcomp-ws .aw-result{margin-top:22px;display:none}
+#adcomp-ws .aw-score-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+#adcomp-ws .aw-score-card{border-radius:10px;padding:20px;text-align:center}
+#adcomp-ws .aw-score-card.bad{background:var(--red-bg);border:1px solid var(--red-border)}
+#adcomp-ws .aw-score-card.ok{background:var(--amber-bg);border:1px solid var(--amber-border)}
+#adcomp-ws .aw-score-card.good{background:var(--green-bg);border:1px solid var(--green-border)}
+#adcomp-ws .aw-score-num{font-size:48px;font-weight:900;line-height:1;margin-bottom:4px}
+#adcomp-ws .aw-score-card.bad .aw-score-num{color:var(--red)}
+#adcomp-ws .aw-score-card.ok .aw-score-num{color:var(--amber)}
+#adcomp-ws .aw-score-card.good .aw-score-num{color:var(--green)}
+#adcomp-ws .aw-score-lbl{font-size:12px;color:var(--ink2);font-weight:500}
+#adcomp-ws .aw-loading{text-align:center;padding:28px;color:var(--ink2);font-size:14px}
+#adcomp-ws .aw-spinner{
+  width:28px;height:28px;border:2.5px solid var(--border);
+  border-top-color:var(--ink);border-radius:50%;
+  animation:aw-spin .8s linear infinite;margin:0 auto 10px;
+}
+@keyframes aw-spin{to{transform:rotate(360deg)}}
+
+/* ── EMAIL MODAL ──────────────────────────────────── */
+#adcomp-ws .aw-modal-backdrop{
+  display:none;
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.45);
+  z-index:9999;
+  align-items:center;justify-content:center;
+  padding:20px;
+  backdrop-filter:blur(2px);
+  -webkit-backdrop-filter:blur(2px);
+}
+#adcomp-ws .aw-modal-backdrop.show{display:flex}
+#adcomp-ws .aw-modal{
+  background:var(--surface);
+  border-radius:20px;
+  padding:32px 28px;
+  width:100%;max-width:440px;
+  position:relative;
+  box-shadow:0 24px 64px rgba(0,0,0,0.2);
+  animation:aw-modal-in .22s ease;
+}
+@keyframes aw-modal-in{
+  from{opacity:0;transform:translateY(12px) scale(0.97)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+#adcomp-ws .aw-modal-close{
+  position:absolute;top:14px;right:14px;
+  width:32px;height:32px;
+  background:var(--bg);border:none;border-radius:50%;
+  font-size:16px;cursor:pointer;color:var(--ink3);
+  display:flex;align-items:center;justify-content:center;
+  transition:background .15s;
+}
+#adcomp-ws .aw-modal-close:hover{background:var(--border)}
+#adcomp-ws .aw-modal-score-badge{
+  display:inline-flex;align-items:baseline;gap:4px;
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:8px;padding:6px 12px;margin-bottom:16px;
+}
+#adcomp-ws .aw-modal-score-num{font-size:22px;font-weight:900;color:var(--ink)}
+#adcomp-ws .aw-modal-score-lbl{font-size:12px;color:var(--ink3);font-weight:500}
+#adcomp-ws .aw-modal-hed{font-size:18px;font-weight:800;color:var(--ink);letter-spacing:-0.4px;line-height:1.25;margin-bottom:6px}
+#adcomp-ws .aw-modal-sub{font-size:13px;color:var(--ink2);margin-bottom:20px;line-height:1.6}
+#adcomp-ws .aw-email-row{display:flex;gap:8px;flex-wrap:wrap}
+#adcomp-ws .aw-email-input{
+  flex:1;min-width:160px;
+  border:1.5px solid var(--border);border-radius:8px;
+  padding:11px 14px;font-size:14px;
+  background:var(--bg);color:var(--ink);
+  outline:none;transition:border-color .18s;
+  font-family:inherit;
+}
+#adcomp-ws .aw-email-input:focus{border-color:var(--ink)}
+#adcomp-ws .aw-email-btn{
+  background:var(--ink);color:#fff;
+  border:none;border-radius:8px;
+  padding:11px 18px;font-size:14px;font-weight:600;
+  cursor:pointer;white-space:nowrap;
+  transition:opacity .18s;font-family:inherit;
+  touch-action:manipulation;
+}
+#adcomp-ws .aw-email-btn:hover{opacity:.82}
+#adcomp-ws .aw-email-btn:disabled{opacity:.4;cursor:not-allowed}
+#adcomp-ws .aw-email-error{
+  margin-top:8px;font-size:12.5px;color:var(--red);display:none;
+}
+#adcomp-ws .aw-email-success{
+  display:none;text-align:center;padding:8px 0 4px;
+}
+#adcomp-ws .aw-email-success-icon{font-size:36px;margin-bottom:10px}
+#adcomp-ws .aw-email-success-hed{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:4px}
+#adcomp-ws .aw-email-success-sub{font-size:13px;color:var(--ink2);line-height:1.55;margin-bottom:18px}
+#adcomp-ws .aw-email-success-cta{
+  display:block;
+  background:var(--ink);color:#fff;
+  border-radius:10px;padding:13px 20px;
+  font-size:14px;font-weight:700;
+  text-decoration:none;text-align:center;
+  transition:opacity .18s;
+}
+#adcomp-ws .aw-email-success-cta:hover{opacity:.82}
+
+/* ── FIXED STICKY CTA ─────────────────────────────── */
+#adcomp-ws .aw-sticky-cta{
+  position:fixed;bottom:0;left:0;right:0;
+  z-index:999;background:var(--ink);
+  padding:12px 20px;
+  display:flex;align-items:center;justify-content:center;
+  gap:12px;border-top:1px solid #222;
+}
+#adcomp-ws .aw-sticky-cta a{
+  background:#fff;color:var(--ink);
+  border:none;border-radius:8px;
+  padding:10px 22px;font-size:14px;font-weight:700;
+  text-decoration:none;white-space:nowrap;
+  transition:opacity .2s;
+}
+#adcomp-ws .aw-sticky-cta a:hover{opacity:.85}
+#adcomp-ws .aw-sticky-cta span{font-size:13px;color:rgba(255,255,255,.55)}
+#adcomp-ws .aw-sticky-spacer{height:60px}
+
+/* ── PROOF BAR ────────────────────────────────────── */
+#adcomp-ws .aw-proof-bar{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--border);
+  border:1px solid var(--border);border-radius:var(--r);
+  overflow:hidden;margin:36px 0 0;
+}
+#adcomp-ws .aw-proof-item{background:var(--surface);padding:22px 18px;text-align:center}
+#adcomp-ws .aw-proof-num{font-size:34px;font-weight:900;letter-spacing:-1px;color:var(--green)}
+#adcomp-ws .aw-proof-lbl{font-size:12px;color:var(--ink2);margin-top:3px}
+
+/* ── SECTION LABELS + HEADINGS ────────────────────── */
+#adcomp-ws .aw-eyebrow{
+  font-size:11px;font-weight:700;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--ink3);
+  margin-bottom:14px;display:block;
+}
+#adcomp-ws .aw-h2{
+  font-size:clamp(26px,4vw,38px);font-weight:800;
+  letter-spacing:-1px;line-height:1.15;margin-bottom:14px;color:var(--ink);
+}
+#adcomp-ws .aw-sub{font-size:16px;color:var(--ink2);line-height:1.7;margin-bottom:36px;max-width:580px}
+
+/* ── PROBLEM GRID ─────────────────────────────────── */
+#adcomp-ws .aw-problem-grid{display:grid;gap:10px}
+#adcomp-ws .aw-problem-card{
+  display:flex;align-items:flex-start;gap:14px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:18px 22px;
+}
+#adcomp-ws .aw-problem-icon{
+  width:34px;height:34px;border-radius:8px;
+  background:var(--red-bg);display:flex;
+  align-items:center;justify-content:center;
+  font-size:17px;flex-shrink:0;
+}
+#adcomp-ws .aw-problem-card h4{font-size:14px;font-weight:700;margin-bottom:3px}
+#adcomp-ws .aw-problem-card p{font-size:13px;color:var(--ink2);line-height:1.5}
+
+/* ── FEATURES ─────────────────────────────────────── */
+#adcomp-ws .aw-features-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#adcomp-ws .aw-feature-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:22px;
+}
+#adcomp-ws .aw-feature-icon{font-size:22px;margin-bottom:10px}
+#adcomp-ws .aw-feature-card h4{font-size:14px;font-weight:700;margin-bottom:5px}
+#adcomp-ws .aw-feature-card p{font-size:13px;color:var(--ink2);line-height:1.5}
+
+/* ── GUARANTEE ────────────────────────────────────── */
+#adcomp-ws .aw-guarantee{
+  background:var(--ink);color:#fff;
+  border-radius:var(--r);padding:40px;text-align:center;
+}
+#adcomp-ws .aw-guarantee .aw-g-num{
+  font-size:76px;font-weight:900;letter-spacing:-4px;
+  color:#fff;line-height:1;margin-bottom:6px;
+}
+#adcomp-ws .aw-guarantee .aw-g-lbl{font-size:16px;color:rgba(255,255,255,.45);margin-bottom:20px}
+#adcomp-ws .aw-guarantee .aw-h2{color:#fff}
+#adcomp-ws .aw-guarantee p{color:rgba(255,255,255,.6);font-size:15px;line-height:1.7}
+
+/* ── STEPS ────────────────────────────────────────── */
+#adcomp-ws .aw-steps{display:flex;flex-direction:column;gap:0}
+#adcomp-ws .aw-step{
+  display:flex;gap:18px;align-items:flex-start;
+  padding:22px 0;border-bottom:1px solid var(--border);
+}
+#adcomp-ws .aw-step:last-child{border-bottom:none}
+#adcomp-ws .aw-step-num{
+  width:34px;height:34px;border-radius:50%;
+  background:var(--ink);color:#fff;
+  font-size:13px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:2px;
+}
+#adcomp-ws .aw-step h4{font-size:15px;font-weight:700;margin-bottom:4px}
+#adcomp-ws .aw-step p{font-size:13px;color:var(--ink2);line-height:1.5}
+#adcomp-ws .aw-step-price{
+  display:inline-block;margin-top:8px;
+  background:var(--amber-bg);color:var(--amber);
+  border:1px solid var(--amber-border);border-radius:6px;
+  padding:2px 9px;font-size:12px;font-weight:700;
+}
+
+/* ── PRICING ──────────────────────────────────────── */
+#adcomp-ws .aw-pricing-stack{display:flex;flex-direction:column;gap:10px}
+#adcomp-ws .aw-price-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:26px;
+}
+#adcomp-ws .aw-price-card.featured{border-color:var(--ink);border-width:2px}
+#adcomp-ws .aw-best-value{
+  display:inline-block;margin-bottom:14px;
+  background:var(--ink);color:#fff;
+  border-radius:6px;padding:3px 10px;
+  font-size:11px;font-weight:700;letter-spacing:0.05em;
+}
+#adcomp-ws .aw-price-name{font-size:17px;font-weight:700;margin-bottom:4px}
+#adcomp-ws .aw-price-tag{display:flex;align-items:baseline;gap:6px;margin-bottom:6px}
+#adcomp-ws .aw-price-amount{font-size:38px;font-weight:900;letter-spacing:-1.5px}
+#adcomp-ws .aw-price-period{font-size:13px;color:var(--ink2)}
+#adcomp-ws .aw-price-desc{font-size:13px;color:var(--ink2);margin-bottom:18px;line-height:1.5}
+#adcomp-ws .aw-price-features{display:flex;flex-direction:column;gap:7px}
+#adcomp-ws .aw-price-feature{
+  display:flex;align-items:flex-start;gap:9px;
+  font-size:13px;color:var(--ink2);
+}
+#adcomp-ws .aw-price-feature::before{content:'✓';color:var(--green);font-weight:700;flex-shrink:0;margin-top:1px}
+
+/* ── ICP ──────────────────────────────────────────── */
+#adcomp-ws .aw-icp-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+#adcomp-ws .aw-icp-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:14px 18px;
+  font-size:14px;font-weight:600;
+  display:flex;align-items:center;gap:10px;
+}
+#adcomp-ws .aw-icp-icon{font-size:20px}
+#adcomp-ws .aw-not-for{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:24px;margin-top:16px;
+}
+#adcomp-ws .aw-not-for h4{font-size:13px;font-weight:700;margin-bottom:10px;color:var(--ink2)}
+#adcomp-ws .aw-not-for ul{list-style:none;display:flex;flex-direction:column;gap:7px}
+#adcomp-ws .aw-not-for li{font-size:13px;color:var(--ink3);display:flex;gap:8px}
+#adcomp-ws .aw-not-for li::before{content:'×';color:var(--red);font-weight:700}
+
+/* ── BUTTONS ──────────────────────────────────────── */
+#adcomp-ws .aw-btn{
+  display:inline-block;
+  background:var(--ink);color:#fff;
+  border:none;border-radius:10px;
+  padding:15px 30px;font-size:15px;font-weight:700;
+  cursor:pointer;text-decoration:none;
+  transition:opacity .2s;width:100%;text-align:center;
+  font-family:inherit;
+}
+#adcomp-ws .aw-btn:hover{opacity:.85}
+#adcomp-ws .aw-btn-note{font-size:12px;color:var(--ink3);margin-top:10px;text-align:center}
+
+/* ── FINAL CTA ────────────────────────────────────── */
+#adcomp-ws .aw-cta{text-align:center;padding:72px 20px;max-width:600px;margin:0 auto}
+#adcomp-ws .aw-cta .aw-h2{margin-bottom:10px}
+#adcomp-ws .aw-cta p{color:var(--ink2);font-size:16px;margin-bottom:28px}
+
+/* ── FOOTER ───────────────────────────────────────── */
+#adcomp-ws .aw-footer{
+  text-align:center;padding:28px 20px;
+  font-size:12px;color:var(--ink3);
+  border-top:1px solid var(--border);
+}
+
+/* ── RESPONSIVE ───────────────────────────────────── */
+@media(max-width:560px){
+  #adcomp-ws .aw-score-grid{grid-template-columns:1fr}
+  #adcomp-ws .aw-proof-bar{grid-template-columns:1fr}
+  #adcomp-ws .aw-features-grid{grid-template-columns:1fr}
+  #adcomp-ws .aw-icp-grid{grid-template-columns:1fr}
+  #adcomp-ws .aw-h1{letter-spacing:-1px}
+  #adcomp-ws section{padding:40px 16px}
+  #adcomp-ws .aw-hero{padding:40px 16px 24px}
+  #adcomp-ws .aw-tool{padding:20px 16px}
+  #adcomp-ws .aw-guarantee{padding:28px 20px}
+  #adcomp-ws .aw-hero-sub{font-size:15px}
+  #adcomp-ws .aw-url-row{flex-direction:column}
+  #adcomp-ws .aw-check-btn{width:100%}
+  #adcomp-ws .aw-modal{padding:24px 18px}
+  #adcomp-ws .aw-email-row{flex-direction:column;gap:6px}
+  #adcomp-ws .aw-email-btn{width:100%;padding:12px}
+  #adcomp-ws .aw-sticky-cta span{display:none}
+  #adcomp-ws .aw-sticky-cta a{width:100%;text-align:center}
+}
+</style>
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W95RB6L"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<div id="adcomp-ws">
+
+<!-- NAV -->
+<nav class="aw-nav">
+  <span class="aw-nav-logo">AdComp</span>
+  <a href="https://rzp.io/rzp/webaudit" class="aw-nav-cta" target="_blank">Book Audit — ₹199</a>
+</nav>
+
+<!-- HERO -->
+<section class="aw-hero">
+  <div class="aw-badge">For businesses running ads to a WordPress website</div>
+  <h1 class="aw-h1">Your traffic is fine.<br><span>Your infrastructure</span><br>is not.</h1>
+  <p class="aw-hero-sub">Most businesses lose 15–30% of paid traffic to slow load times, security gaps, and poor mobile optimisation. We fix the layer underneath your ads that nobody else is talking about.</p>
+
+  <!-- REPORT TOOL -->
+  <div class="aw-tool">
+    <h3>Check your website score — free</h3>
+    <p class="aw-tool-sub">Enter your URL. See your Google PageSpeed score in 15 seconds.</p>
+    <div class="aw-url-row">
+      <input type="url" class="aw-url-input" id="awUrlInput" placeholder="https://yourwebsite.com" autocomplete="off">
+      <button class="aw-check-btn" id="awCheckBtn" onclick="awCheckScore()">Check Score</button>
+    </div>
+    <div class="aw-result" id="awResult"></div>
+  </div>
+
+  <!-- PROOF BAR -->
+  <div class="aw-proof-bar">
+    <div class="aw-proof-item">
+      <div class="aw-proof-num">90+</div>
+      <div class="aw-proof-lbl">PageSpeed score guaranteed</div>
+    </div>
+    <div class="aw-proof-item">
+      <div class="aw-proof-num">5</div>
+      <div class="aw-proof-lbl">Business days to deliver</div>
+    </div>
+    <div class="aw-proof-item">
+      <div class="aw-proof-num">₹0</div>
+      <div class="aw-proof-lbl">If we miss the target</div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- PROBLEM -->
+<section>
+  <span class="aw-eyebrow">Why your ads are underperforming</span>
+  <h2 class="aw-h2">Marketing gets blamed.<br>Infrastructure is the culprit.</h2>
+  <p class="aw-sub">When conversions drop, the instinct is to fix the ads. But slow sites, server downtime, and broken checkout flows aren't ad problems — they're infrastructure problems that are invisible until they've already cost you.</p>
+  <div class="aw-problem-grid">
+    <div class="aw-problem-card">
+      <div class="aw-problem-icon">📉</div>
+      <div>
+        <h4>Slow site = higher cost per click</h4>
+        <p>Google penalises slow landing pages with higher CPCs. You pay more for the same clicks as a competitor with a faster site.</p>
+      </div>
+    </div>
+    <div class="aw-problem-card">
+      <div class="aw-problem-icon">🚪</div>
+      <div>
+        <h4>53% of visitors leave in 3 seconds</h4>
+        <p>If your page takes more than 3 seconds to load, more than half your paid traffic leaves before they see your offer. You still pay for that click.</p>
+      </div>
+    </div>
+    <div class="aw-problem-card">
+      <div class="aw-problem-icon">🔓</div>
+      <div>
+        <h4>One hack wipes every lead form</h4>
+        <p>An unsecured WordPress site is one malware injection away from losing every enquiry, booking, and sale overnight.</p>
+      </div>
+    </div>
+    <div class="aw-problem-card">
+      <div class="aw-problem-icon">📱</div>
+      <div>
+        <h4>70% of traffic is mobile</h4>
+        <p>Most websites are optimised for desktop. Your mobile visitors — the majority — get a broken, slow experience that kills conversions.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- WHAT YOU GET -->
+<section>
+  <span class="aw-eyebrow">Four systems. One monthly invoice.</span>
+  <h2 class="aw-h2">Everything between your ads and your revenue.</h2>
+  <p class="aw-sub">We manage the full infrastructure layer so you can focus on running your business. Reported to you every 30 days.</p>
+  <div class="aw-features-grid">
+    <div class="aw-feature-card">
+      <div class="aw-feature-icon">⚡</div>
+      <h4>Speed optimisation</h4>
+      <p>Image compression, code minification, caching, CDN config. One-time fix. 90+ PageSpeed — before and after proof included.</p>
+    </div>
+    <div class="aw-feature-card">
+      <div class="aw-feature-icon">🔒</div>
+      <h4>Security hardening</h4>
+      <p>Firewall setup, malware scanning, brute force protection, SSL monitoring, and suspicious login alerts.</p>
+    </div>
+    <div class="aw-feature-card">
+      <div class="aw-feature-icon">💾</div>
+      <h4>Daily backups</h4>
+      <p>Automated daily backups with 30-day retention. Restore in under 4 hours. Never lose a lead form again.</p>
+    </div>
+    <div class="aw-feature-card">
+      <div class="aw-feature-icon">📊</div>
+      <h4>Monthly report</h4>
+      <p>Uptime monitoring, speed score tracking, security threat log. Full visibility every 30 days.</p>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- GUARANTEE -->
+<section>
+  <div class="aw-guarantee">
+    <div class="aw-g-num">90+</div>
+    <div class="aw-g-lbl">Google PageSpeed score — guaranteed</div>
+    <h2 class="aw-h2">Miss the target?<br>You pay nothing.</h2>
+    <p>We guarantee your website hits 90+ on desktop within 5 business days — or we refund every rupee. No questions. No drama. We can make this promise because we've done this hundreds of times.</p>
+  </div>
+</section>
+
+<hr>
+
+<!-- HOW IT WORKS -->
+<section>
+  <span class="aw-eyebrow">The process</span>
+  <h2 class="aw-h2">Simple. Fast. Guaranteed.</h2>
+  <p class="aw-sub">Four steps from booking to a faster, more secure website.</p>
+  <div class="aw-steps">
+    <div class="aw-step">
+      <div class="aw-step-num">1</div>
+      <div>
+        <h4>Book your audit call</h4>
+        <p>Pay ₹199 to secure your slot. We pre-audit your website before the call so every minute counts. Your ₹199 is adjusted toward the full fix.</p>
+        <span class="aw-step-price">₹199 — adjusted toward fix</span>
+      </div>
+    </div>
+    <div class="aw-step">
+      <div class="aw-step-num">2</div>
+      <div>
+        <h4>30-minute audit call</h4>
+        <p>We show you your current PageSpeed score live, explain exactly what's slowing your site down, and tell you what we'll fix. You decide on the call.</p>
+      </div>
+    </div>
+    <div class="aw-step">
+      <div class="aw-step-num">3</div>
+      <div>
+        <h4>Pay the balance and we start</h4>
+        <p>₹4,800 remaining (₹199 already adjusted). Our developer gets access within 24 hours and starts immediately.</p>
+        <span class="aw-step-price">₹4,999 total</span>
+      </div>
+    </div>
+    <div class="aw-step">
+      <div class="aw-step-num">4</div>
+      <div>
+        <h4>Before and after report in 5 days</h4>
+        <p>We deliver a full report showing your old score, your new score, and every change we made. Proof you can see with your own eyes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- PRICING -->
+<section>
+  <span class="aw-eyebrow">Straightforward pricing</span>
+  <h2 class="aw-h2">No surprise invoice.</h2>
+  <p class="aw-sub">Start with the one-time fix. Stay for the maintenance that keeps your results permanent.</p>
+  <div class="aw-pricing-stack">
+    <div class="aw-price-card">
+      <div class="aw-price-name">Website Speed + Security Fix</div>
+      <div class="aw-price-tag">
+        <span class="aw-price-amount">₹4,999</span>
+        <span class="aw-price-period">one time</span>
+      </div>
+      <div class="aw-price-desc">90+ Google PageSpeed guaranteed in 5 business days. Full refund if we miss the target.</div>
+      <div class="aw-price-features">
+        <div class="aw-price-feature">90+ PageSpeed score — guaranteed</div>
+        <div class="aw-price-feature">Full security hardening</div>
+        <div class="aw-price-feature">Mobile speed optimisation</div>
+        <div class="aw-price-feature">Before and after proof report</div>
+        <div class="aw-price-feature">5 business day delivery</div>
+      </div>
+    </div>
+    <div class="aw-price-card featured">
+      <span class="aw-best-value">MOST POPULAR</span>
+      <div class="aw-price-name">Website Care Plan</div>
+      <div class="aw-price-tag">
+        <span class="aw-price-amount">₹15,000</span>
+        <span class="aw-price-period">/month</span>
+      </div>
+      <div class="aw-price-desc">Everything that keeps your speed and security results permanent. One monthly invoice. No surprises.</div>
+      <div class="aw-price-features">
+        <div class="aw-price-feature">Monthly PageSpeed monitoring and regression alerts</div>
+        <div class="aw-price-feature">Firewall, malware scanning, brute force protection</div>
+        <div class="aw-price-feature">Daily automated backups with 30-day retention</div>
+        <div class="aw-price-feature">Emergency restore within 4 hours</div>
+        <div class="aw-price-feature">Monthly health and security report</div>
+        <div class="aw-price-feature">Uptime monitoring — 99.9% guarantee</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- WHO IT'S FOR -->
+<section>
+  <span class="aw-eyebrow">Who this is for</span>
+  <h2 class="aw-h2">Built for businesses running ads to a WordPress site.</h2>
+  <p class="aw-sub">If you're spending on Meta or Google Ads and sending traffic to a slow, unsecured WordPress site — every rupee you spend is working at half capacity.</p>
+  <div class="aw-icp-grid">
+    <div class="aw-icp-card"><span class="aw-icp-icon">🏥</span>Doctors &amp; clinics</div>
+    <div class="aw-icp-card"><span class="aw-icp-icon">⚖️</span>Lawyers &amp; CA firms</div>
+    <div class="aw-icp-card"><span class="aw-icp-icon">🎓</span>Coaches &amp; trainers</div>
+    <div class="aw-icp-card"><span class="aw-icp-icon">💼</span>Consultants</div>
+    <div class="aw-icp-card"><span class="aw-icp-icon">🛍️</span>E-commerce brands</div>
+    <div class="aw-icp-card"><span class="aw-icp-icon">🏗️</span>Real estate developers</div>
+  </div>
+  <div class="aw-not-for">
+    <h4>Not for everyone</h4>
+    <ul>
+      <li>Wix, Squarespace or custom-coded sites — WordPress only</li>
+      <li>Businesses not running paid ads — ROI won't make sense</li>
+      <li>Sites already scoring 85+ on PageSpeed</li>
+    </ul>
+  </div>
+</section>
+
+<hr>
+
+<!-- FINAL CTA -->
+<div class="aw-cta">
+  <h2 class="aw-h2">If your site is leaking revenue, we'll find where.</h2>
+  <p>A 30-minute call. No pitch. No retainer pressure. Your website score, what's broken, and how we fix it — guaranteed.</p>
+  <a href="https://rzp.io/rzp/webaudit" class="aw-btn" target="_blank">Book Your Audit Call — ₹199</a>
+  <p class="aw-btn-note">₹199 adjusted toward the ₹4,999 fix &nbsp;·&nbsp; Only 10 spots this month</p>
+</div>
+
+<div class="aw-footer">© 2026 AdComp. All rights reserved.</div>
+
+<div class="aw-sticky-spacer"></div>
+
+<div class="aw-sticky-cta">
+  <a href="https://rzp.io/rzp/webaudit" target="_blank">Book Audit Call — ₹199 →</a>
+</div>
+
+<!-- EMAIL MODAL -->
+<div class="aw-modal-backdrop" id="awModalBackdrop" onclick="handleAwBackdropClick(event)">
+  <div class="aw-modal" id="awModal">
+    <button class="aw-modal-close" onclick="awCloseModal()" aria-label="Close">✕</button>
+
+    <div id="awModalForm">
+      <div class="aw-modal-score-badge">
+        <span class="aw-modal-score-num" id="awModalScoreNum">—</span>
+        <span class="aw-modal-score-lbl">/ 100 Mobile PageSpeed</span>
+      </div>
+      <p class="aw-modal-hed">Get your full performance report</p>
+      <p class="aw-modal-sub">We'll email you a detailed breakdown with specific fixes for your site — free.</p>
+      <div class="aw-email-row">
+        <input type="email" class="aw-email-input" id="awEmailInput" placeholder="you@yourstore.com" autocomplete="email">
+        <button class="aw-email-btn" id="awEmailBtn" onclick="awSubmitReport()">Send Report</button>
+      </div>
+      <div class="cf-turnstile" id="awReportTurnstile"
+        data-sitekey="0x4AAAAAADPUuDOaFxbemxQV"
+        data-theme="light"
+        data-size="compact"
+        data-callback="onAwReportTurnstile"
+        data-expired-callback="onAwReportTurnstileExpired"
+        data-error-callback="onAwReportTurnstileExpired"
+        style="margin-top:10px">
+      </div>
+      <div class="aw-email-error" id="awEmailError"></div>
+    </div>
+
+    <div class="aw-email-success" id="awEmailSuccess">
+      <div class="aw-email-success-icon">✅</div>
+      <div class="aw-email-success-hed">Report on its way!</div>
+      <div class="aw-email-success-sub">Check your inbox — it'll arrive within 60 seconds.</div>
+      <a href="https://rzp.io/rzp/webaudit" class="aw-email-success-cta" target="_blank">Book your audit call — ₹199 →</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- #adcomp-ws -->
+
+<script>
+(function(){
+  var _awPsData = null;
+  var _awTSToken = '';
+
+  // Your Meta CAPI worker — unchanged from your existing setup.
+  var AW_WORKER_URL = 'https://meta-capi-worker.mandeepsingh97.workers.dev';
+
+  function awGetCookie(name){
+    var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    return match ? match[2] : null;
+  }
+
+  // Shared tracker: pushes to dataLayer (with event_id for GTM's Pixel tag to
+  // read and dedupe against) and sends the same event_id to the CAPI worker.
+  // Do NOT call fbq() directly here — GTM owns the browser-side Pixel fire.
+  function awTrack(eventName, params, email){
+    var eventId = (crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) + Math.random();
+
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push(Object.assign({ event: eventName, event_id: eventId }, params));
+    if(typeof gtag !== 'undefined') gtag('event', eventName, params);
+
+    var payload = {
+      event_name: eventName,
+      event_id: eventId,
+      event_source_url: window.location.href,
+      fbp: awGetCookie('_fbp'),
+      fbc: awGetCookie('_fbc'),
+      user_agent: navigator.userAgent
+    };
+    if(email) payload.email = email;
+
+    fetch(AW_WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).catch(function(){});
+  }
+
+  window.onAwReportTurnstile        = function(t){ _awTSToken = t; };
+  window.onAwReportTurnstileExpired = function(){ _awTSToken = ''; };
+
+  window.awOpenModal = function(score){
+    document.getElementById('awModalScoreNum').textContent = score;
+    document.getElementById('awModalBackdrop').classList.add('show');
+    document.body.style.overflow = 'hidden';
+    setTimeout(function(){ document.getElementById('awEmailInput').focus(); }, 250);
+  };
+  window.awCloseModal = function(){
+    document.getElementById('awModalBackdrop').classList.remove('show');
+    document.body.style.overflow = '';
+  };
+  window.handleAwBackdropClick = function(e){
+    if(e.target === document.getElementById('awModalBackdrop')) awCloseModal();
+  };
+
+  window.awSubmitReport = async function(){
+    var emailEl  = document.getElementById('awEmailInput');
+    var btn      = document.getElementById('awEmailBtn');
+    var errorEl  = document.getElementById('awEmailError');
+    var successEl = document.getElementById('awEmailSuccess');
+    var formEl   = document.getElementById('awModalForm');
+    var email    = emailEl.value.trim();
+
+    errorEl.style.display = 'none';
+
+    if(!email || !email.includes('@')){
+      errorEl.textContent = 'Please enter a valid email address.';
+      errorEl.style.display = 'block';
+      return;
+    }
+    if(!_awPsData){
+      errorEl.textContent = 'Run the speed check first.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+
+    try {
+      // Cloudflare Pages Function — see /functions/api/submit-report.js
+      var res = await fetch('/api/submit-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(Object.assign({}, _awPsData, {
+          email: email,
+          cfTurnstileResponse: _awTSToken,
+        })),
+      });
+      var json = await res.json();
+      if(!res.ok) throw new Error(json.error || 'Something went wrong. Please try again.');
+
+      formEl.style.display     = 'none';
+      successEl.style.display  = 'block';
+      awTrack('speed_report_generated', { url: _awPsData.url, score: _awPsData.performance }, email);
+
+    } catch(e){
+      errorEl.textContent = e.message;
+      errorEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Send Report';
+    }
+  };
+
+  window.awCheckScore = async function(){
+    var url = document.getElementById('awUrlInput').value.trim();
+    if(!url){alert('Please enter your website URL');return;}
+    if(!url.startsWith('http')) url = 'https://' + url;
+
+    awTrack('only_click', { url: url });
+
+    var btn    = document.getElementById('awCheckBtn');
+    var result = document.getElementById('awResult');
+
+    _awPsData = null;
+    btn.disabled = true;
+    btn.textContent = 'Checking...';
+    result.style.display = 'block';
+    result.innerHTML = '<div class="aw-loading"><div class="aw-spinner"></div>Analysing your website — takes about 15 seconds...</div>';
+
+    document.getElementById('awEmailInput').value = '';
+    document.getElementById('awEmailError').style.display = 'none';
+    document.getElementById('awEmailSuccess').style.display = 'none';
+    document.getElementById('awModalForm').style.display = '';
+    document.getElementById('awEmailBtn').disabled = false;
+    document.getElementById('awEmailBtn').textContent = 'Send Report';
+
+    try {
+      // Cloudflare Pages Function — keeps the PageSpeed API key server-side.
+      // See /functions/api/pagespeed.js
+      var res  = await fetch('/api/pagespeed?url=' + encodeURIComponent(url));
+      var data = await res.json();
+      if(data.error) throw new Error(data.error);
+
+      var lhr   = data.lighthouseResult;
+      var score = Math.round(lhr.categories.performance.score * 100);
+      var lcp   = lhr.audits['largest-contentful-paint']?.displayValue || 'N/A';
+      var sc    = score < 50 ? 'bad' : score < 75 ? 'ok' : 'good';
+
+      var seo  = Math.round((lhr.categories.seo?.score                  || 0) * 100);
+      var a11y = Math.round((lhr.categories.accessibility?.score        || 0) * 100);
+      var bp   = Math.round((lhr.categories['best-practices']?.score    || 0) * 100);
+      var fcp  = lhr.audits['first-contentful-paint']?.displayValue     || '';
+      var cls  = lhr.audits['cumulative-layout-shift']?.displayValue    || '';
+      var tbt  = lhr.audits['total-blocking-time']?.displayValue        || '';
+      var si   = lhr.audits['speed-index']?.displayValue                || '';
+      var tti  = lhr.audits['interactive']?.displayValue                || '';
+
+      var oppKeys = [
+        'render-blocking-resources','uses-optimized-images','uses-webp-images',
+        'unused-css-rules','unused-javascript','uses-text-compression',
+        'efficiently-encode-images','defer-offscreen-images',
+        'uses-responsive-images','minify-javascript','minify-css',
+        'uses-long-cache-ttl','uses-rel-preconnect',
+      ];
+      var opportunities = oppKeys
+        .filter(function(k){ return lhr.audits[k] && lhr.audits[k].displayValue && lhr.audits[k].score < 0.9; })
+        .map(function(k){ return {title:lhr.audits[k].title, displayValue:lhr.audits[k].displayValue}; })
+        .slice(0, 6);
+
+      _awPsData = {
+        url:url, performance:score, seo:seo, accessibility:a11y, bestPractices:bp,
+        fcp:fcp, lcp:lcp, cls:cls, tbt:tbt, si:si, tti:tti, opportunities:opportunities
+      };
+
+      result.innerHTML =
+        '<div class="aw-score-grid">'
+        + '<div class="aw-score-card ' + sc + '"><div class="aw-score-num">' + score + '</div><div class="aw-score-lbl">Mobile PageSpeed Score</div></div>'
+        + '<div class="aw-score-card ' + (score < 50 ? 'bad' : 'ok') + '"><div class="aw-score-num" style="font-size:34px;padding-top:6px">' + lcp + '</div><div class="aw-score-lbl">Largest Contentful Paint</div></div>'
+        + '</div>';
+
+      awTrack('pre_email_submission', { url: url, score: score });
+
+      result.scrollIntoView({behavior:'smooth', block:'start'});
+      setTimeout(function(){ awOpenModal(score); }, 1500);
+
+    } catch(e){
+      result.innerHTML =
+        '<div style="border-radius:10px;padding:16px 18px;font-size:14px;font-weight:600;background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)">Couldn\'t fetch your live score automatically. Book an audit call and we\'ll run the full report live with you.</div>';
+
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({event:'speed_check_error', url:url});
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Check Score';
+  };
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') awCloseModal();
+  });
+
+  document.addEventListener('DOMContentLoaded', function(){
+    var inp = document.getElementById('awUrlInput');
+    if(inp) inp.addEventListener('keydown', function(e){ if(e.key==='Enter') awCheckScore(); });
+    var eml = document.getElementById('awEmailInput');
+    if(eml) eml.addEventListener('keydown', function(e){ if(e.key==='Enter') awSubmitReport(); });
+  });
+})();
+</script>
+</body>
+</html>
