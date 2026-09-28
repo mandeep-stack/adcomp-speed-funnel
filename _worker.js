@@ -45,8 +45,11 @@ export default {
       return handleReportFetch(path, env);
     }
 
-    // Everything else: serve the static site (index.html, etc.)
-    return env.ASSETS.fetch(request);
+    // This worker only owns /api/* and /pagespeed/report/* (see the two
+    // Routes configured on speed.adcomp.xyz) — Pages serves the rest of
+    // the site directly, so anything else reaching this worker is a
+    // routing mistake, not a page it should try to serve.
+    return new Response('Not found', { status: 404 });
   },
 
   // ─── Queue Consumer ─────────────────────────────────────────
