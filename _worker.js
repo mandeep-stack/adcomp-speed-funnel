@@ -1,6 +1,14 @@
-// Cloudflare Worker for speed.adcomp.xyz — bound via Routes:
-//   speed.adcomp.xyz/api/*
-//   speed.adcomp.xyz/pagespeed/report/*
+// This file is the Cloudflare Pages "Advanced Mode" function for the
+// speed.adcomp.xyz Pages project itself (this repo). It is SEPARATE from
+// the standalone `black-limit-3a10` Worker, which has zone-level Routes
+// (speed.adcomp.xyz/api/*, /pagespeed/report/*) that intercept those two
+// paths before Pages ever sees them. Because of that route precedence,
+// the /api/* and /pagespeed/report/* handling below never actually runs
+// in production right now — but this file's fetch() still governs EVERY
+// OTHER request on the domain, including "/", so it MUST fall back to
+// env.ASSETS.fetch(request) for anything it doesn't explicitly handle.
+// Removing that fallback breaks the entire live site (this happened once
+// — don't repeat it).
 //
 // This worker is a PRODUCER only — it does NOT process the queue itself.
 // pagespeed-worker (adcomp.xyz) is the consumer of pagespeed-queue and
@@ -41,11 +49,8 @@ export default {
       return handleReportFetch(path, env);
     }
 
-    // This worker only owns /api/* and /pagespeed/report/* (see the two
-    // Routes configured on speed.adcomp.xyz) — Pages serves the rest of
-    // the site directly, so anything else reaching this worker is a
-    // routing mistake, not a page it should try to serve.
-    return new Response('Not found', { status: 404 });
+    // Everything else: serve the static site (index.html, etc.)
+    return env.ASSETS.fetch(request);
   },
 };
 
