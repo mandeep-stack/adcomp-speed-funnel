@@ -6,6 +6,44 @@
 <title>Website Speed &amp; Security Fix — AdComp</title>
 <meta name="description" content="Free website speed check + guaranteed 90+ PageSpeed fix for WordPress sites running ads.">
 
+<!-- Meta PageView CAPI (independent of GTM being blocked) -->
+<script>
+(function() {
+  if (!window.__metaPageViewEventId) {
+    window.__metaPageViewEventId = 'pv_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+  }
+  var eventId = window.__metaPageViewEventId;
+
+  var attempts = 0;
+  function sendCapi() {
+    var fbpMatch = document.cookie.match(/_fbp=([^;]+)/);
+    var fbcMatch = document.cookie.match(/_fbc=([^;]+)/);
+    var fbp = fbpMatch ? fbpMatch[1] : '';
+    var fbc = fbcMatch ? fbcMatch[1] : (new URLSearchParams(location.search).get('fbclid') || '');
+
+    if (!fbp && attempts < 10) {
+      attempts++;
+      setTimeout(sendCapi, 100);
+      return;
+    }
+
+    fetch('https://adcomp.xyz/capi/event', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        eventId: eventId,
+        url: location.href,
+        fbp: fbp,
+        fbc: fbc
+      }),
+      keepalive: true
+    });
+  }
+  sendCapi();
+})();
+</script>
+<!-- End Meta PageView CAPI -->
+
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
