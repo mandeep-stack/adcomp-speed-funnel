@@ -137,28 +137,13 @@ async function handleSubmitReport(request, env, ctx) {
   }
   await env.QUEUE.send({ ...body, origin: new URL(request.url).origin });
 
-  // ── Backup log to the Page_Speed_main Google Sheet ──────────────────
-  // Fire-and-forget via waitUntil so it never delays the response or
-  // blocks submission if the Sheet/Apps Script is slow or down.
-  if (env.SHEET_WEBHOOK_URL) {
-    const logPromise = fetch(env.SHEET_WEBHOOK_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({
-        email,
-        url,
-        score: performance,
-        lcp: body.lcp,
-        ts: new Date().toISOString(),
-      }),
-    }).catch((err) => console.error('Sheet webhook failed:', err));
-
-    if (ctx && ctx.waitUntil) {
-      ctx.waitUntil(logPromise);
-    } else {
-      await logPromise;
-    }
-  }
+  // NOTE: the Page_Speed_main Sheet backup log is NOT done here. On the
+  // original WordPress page it's a client-side fetch() straight to the
+  // Apps Script URL, fired the moment the score renders (see index.html's
+  // awCheckScore) — it never went through any backend/worker. Don't
+  // re-add a server-side version here; it would duplicate rows at the
+  // wrong trigger point (submit time instead of check-score time) and
+  // with the wrong fields (this handler has `email`, the original never did).
 
   return json({ ok: true }, 200, true);
 }
