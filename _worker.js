@@ -42,7 +42,7 @@ export default {
     }
 
     if (path === '/api/submit-report' && method === 'POST') {
-      return handleSubmitReport(request, env);
+      return handleSubmitReport(request, env, ctx);
     }
 
     if (method === 'GET' && path.startsWith('/pagespeed/report/')) {
@@ -91,7 +91,7 @@ async function handlePagespeed(request, env) {
 
 // ─── Submission: verify → rate-limit → queue for async processing ────
 
-async function handleSubmitReport(request, env) {
+async function handleSubmitReport(request, env, ctx) {
   const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
 
   let body;
@@ -136,6 +136,29 @@ async function handleSubmitReport(request, env) {
     return json({ error: 'Report queue is not configured yet.' }, 500);
   }
   await env.QUEUE.send({ ...body, origin: new URL(request.url).origin });
+
+  // ── Backup log to the Page_Speed_main Google Sheet ──────────────────
+  // Fire-and-forget via waitUntil so it never delays the response or
+  // blocks submission if the Sheet/Apps Script is slow or down.
+  if (env.SHEET_WEBHOOK_URL) {
+    const logPromise = fetch(env.SHEET_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({
+        email,
+        url,
+        score: performance,
+        lcp: body.lcp,
+        ts: new Date().toISOString(),
+      }),
+    }).catch((err) => console.error('Sheet webhook failed:', err));
+
+    if (ctx && ctx.waitUntil) {
+      ctx.waitUntil(logPromise);
+    } else {
+      await logPromise;
+    }
+  }
 
   return json({ ok: true }, 200, true);
 }
