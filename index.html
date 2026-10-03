@@ -969,6 +969,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   // ── Instant popup checkout: button → small form → Razorpay popup ──
   window.awOpenAuditForm = function(e){
     if(e && e.preventDefault) e.preventDefault();
+    awTrack('book_audit_call', {});
     document.getElementById('awAuditError').style.display = 'none';
     document.getElementById('awAuditBackdrop').classList.add('show');
     document.body.style.overflow = 'hidden';
@@ -1007,14 +1008,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     // GTM event: fires the moment the visitor submits this form — a lead
     // signal distinct from the existing only_click / pre_email_submission
     // / speed_report_generated events, which are untouched.
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({
-      event: 'audit_call_form_submit',
+    awTrack('audit_call_form_submit', {
       form_name: name,
       form_email: email,
       form_phone: phone,
       form_website: website,
-    });
+    }, email);
 
     btn.disabled = true;
     btn.textContent = 'Preparing payment…';
