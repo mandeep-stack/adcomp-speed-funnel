@@ -53,6 +53,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- End Google Tag Manager -->
 
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <style>
 /* ── RESET + ROOT ─────────────────────────────────── */
@@ -449,7 +450,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- NAV -->
 <nav class="aw-nav">
   <span class="aw-nav-logo">AdComp</span>
-  <a href="https://rzp.io/rzp/webaudit" class="aw-nav-cta" target="_blank">Book Audit — ₹199</a>
+  <a href="https://rzp.io/rzp/webaudit" class="aw-nav-cta" onclick="return awOpenAuditForm(event)">Book Audit — ₹199</a>
 </nav>
 
 <!-- HERO -->
@@ -683,7 +684,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <div class="aw-cta">
   <h2 class="aw-h2">If your site is leaking revenue, we'll find where.</h2>
   <p>A 30-minute call. No pitch. No retainer pressure. Your website score, what's broken, and how we fix it — guaranteed.</p>
-  <a href="https://rzp.io/rzp/webaudit" class="aw-btn" target="_blank">Book Your Audit Call — ₹199</a>
+  <a href="https://rzp.io/rzp/webaudit" class="aw-btn" onclick="return awOpenAuditForm(event)">Book Your Audit Call — ₹199</a>
   <p class="aw-btn-note">₹199 adjusted toward the ₹4,999 fix &nbsp;·&nbsp; Only 10 spots this month</p>
 </div>
 
@@ -692,7 +693,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <div class="aw-sticky-spacer"></div>
 
 <div class="aw-sticky-cta">
-  <a href="https://rzp.io/rzp/webaudit" target="_blank">Book Audit Call — ₹199 →</a>
+  <a href="https://rzp.io/rzp/webaudit" onclick="return awOpenAuditForm(event)">Book Audit Call — ₹199 →</a>
 </div>
 
 <!-- EMAIL MODAL -->
@@ -727,7 +728,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="aw-email-success-icon">✅</div>
       <div class="aw-email-success-hed">Report on its way!</div>
       <div class="aw-email-success-sub">Check your inbox — it'll arrive within 60 seconds.</div>
-      <a href="https://rzp.io/rzp/webaudit" class="aw-email-success-cta" target="_blank">Book your audit call — ₹199 →</a>
+      <a href="https://rzp.io/rzp/webaudit" class="aw-email-success-cta" onclick="return awOpenAuditForm(event)">Book your audit call — ₹199 →</a>
+    </div>
+  </div>
+</div>
+
+<!-- AUDIT BOOKING MODAL -->
+<div class="aw-modal-backdrop" id="awAuditBackdrop" onclick="handleAwAuditBackdropClick(event)">
+  <div class="aw-modal" id="awAuditModal">
+    <button class="aw-modal-close" onclick="awCloseAuditForm()" aria-label="Close">✕</button>
+
+    <div id="awAuditForm">
+      <p class="aw-modal-hed">Secure your ₹199 audit slot</p>
+      <p class="aw-modal-sub">Takes 20 seconds. We'll pre-audit your site before the call.</p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <input type="text"  class="aw-email-input" id="awAuditName"    placeholder="Your name" autocomplete="name">
+        <input type="email" class="aw-email-input" id="awAuditEmail"   placeholder="Email address" autocomplete="email">
+        <input type="tel"   class="aw-email-input" id="awAuditPhone"   placeholder="WhatsApp number" autocomplete="tel">
+        <input type="url"   class="aw-email-input" id="awAuditWebsite" placeholder="yourwebsite.com" autocomplete="url">
+      </div>
+      <button class="aw-email-btn" id="awAuditSubmitBtn" onclick="awSubmitAuditForm()" style="width:100%;margin-top:14px;padding:13px">Pay ₹199 & Book Slot</button>
+      <div class="aw-email-error" id="awAuditError"></div>
     </div>
   </div>
 </div>
@@ -936,7 +957,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   };
 
   document.addEventListener('keydown', function(e){
-    if(e.key === 'Escape') awCloseModal();
+    if(e.key === 'Escape') { awCloseModal(); awCloseAuditForm(); }
   });
 
   document.addEventListener('DOMContentLoaded', function(){
@@ -945,6 +966,130 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     var eml = document.getElementById('awEmailInput');
     if(eml) eml.addEventListener('keydown', function(e){ if(e.key==='Enter') awSubmitReport(); });
   });
+  // ── Instant popup checkout: button → small form → Razorpay popup ──
+  window.awOpenAuditForm = function(e){
+    if(e && e.preventDefault) e.preventDefault();
+    document.getElementById('awAuditError').style.display = 'none';
+    document.getElementById('awAuditBackdrop').classList.add('show');
+    document.body.style.overflow = 'hidden';
+    setTimeout(function(){ document.getElementById('awAuditName').focus(); }, 250);
+    return false; // belt-and-suspenders: never follow the href
+  };
+  window.awCloseAuditForm = function(){
+    document.getElementById('awAuditBackdrop').classList.remove('show');
+    document.body.style.overflow = '';
+  };
+  window.handleAwAuditBackdropClick = function(e){
+    if(e.target === document.getElementById('awAuditBackdrop')) awCloseAuditForm();
+  };
+
+  window.awSubmitAuditForm = async function(){
+    var nameEl    = document.getElementById('awAuditName');
+    var emailEl   = document.getElementById('awAuditEmail');
+    var phoneEl   = document.getElementById('awAuditPhone');
+    var websiteEl = document.getElementById('awAuditWebsite');
+    var btn       = document.getElementById('awAuditSubmitBtn');
+    var errorEl   = document.getElementById('awAuditError');
+
+    var name    = nameEl.value.trim();
+    var email   = emailEl.value.trim();
+    var phone   = phoneEl.value.trim();
+    var website = websiteEl.value.trim();
+    if(website && !/^https?:\/\//i.test(website)) website = 'https://' + website;
+
+    errorEl.style.display = 'none';
+
+    if(!name){ errorEl.textContent = 'Please enter your name.'; errorEl.style.display = 'block'; return; }
+    if(!email || !email.includes('@')){ errorEl.textContent = 'Please enter a valid email.'; errorEl.style.display = 'block'; return; }
+    if(!phone){ errorEl.textContent = 'Please enter your phone number.'; errorEl.style.display = 'block'; return; }
+    if(!website){ errorEl.textContent = 'Please enter your website URL.'; errorEl.style.display = 'block'; return; }
+
+    // GTM event: fires the moment the visitor submits this form — a lead
+    // signal distinct from the existing only_click / pre_email_submission
+    // / speed_report_generated events, which are untouched.
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: 'audit_call_form_submit',
+      form_name: name,
+      form_email: email,
+      form_phone: phone,
+      form_website: website,
+    });
+
+    btn.disabled = true;
+    btn.textContent = 'Preparing payment…';
+
+    var AW_ORDER_WORKER_BASE = 'https://adcomp-audit-worker.mandeepsingh97.workers.dev';
+
+    try {
+      // The Cloudflare Worker creates the WooCommerce order AND the
+      // Razorpay order (your WordPress hosting can't reliably call
+      // Razorpay's API directly, so the Worker does that step instead).
+      var res = await fetch(AW_ORDER_WORKER_BASE + '/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name, email: email, phone: phone, website: website }),
+      });
+      var data = await res.json();
+      if(!res.ok || !data.razorpay_order_id) throw new Error(data.error || 'Could not start payment. Please try again.');
+
+      var rzp = new Razorpay({
+        key: data.key_id,
+        amount: data.amount,
+        currency: data.currency,
+        order_id: data.razorpay_order_id,
+        name: 'AdComp',
+        description: 'Website Audit Call — ₹199',
+        prefill: { name: name, email: email, contact: phone },
+        notes: { wc_order_id: String(data.wc_order_id || '') },
+        handler: async function(response){
+          btn.textContent = 'Confirming…';
+          try {
+            // Same Worker verifies the payment — it's the only place
+            // holding the correct Razorpay secret, so there's no mismatch
+            // risk like there was when WordPress tried to verify with a
+            // separately-configured copy of it.
+            var vRes = await fetch(AW_ORDER_WORKER_BASE + '/verify-payment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                wc_order_id: data.wc_order_id,
+                order_key: data.order_key,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
+            var vJson = await vRes.json();
+            if(vJson.verified && vJson.redirect_url){
+              window.location.href = vJson.redirect_url;
+            } else {
+              errorEl.textContent = 'Payment received but confirmation failed — we will verify manually, you will get a confirmation shortly.';
+              errorEl.style.display = 'block';
+            }
+          } catch(e){
+            errorEl.textContent = 'Payment received but confirmation failed — we will verify manually, you will get a confirmation shortly.';
+            errorEl.style.display = 'block';
+          }
+        },
+        modal: {
+          ondismiss: function(){
+            btn.disabled = false;
+            btn.textContent = 'Pay ₹199 & Book Slot';
+          }
+        }
+      });
+      rzp.open();
+      btn.disabled = false;
+      btn.textContent = 'Pay ₹199 & Book Slot';
+
+    } catch(e){
+      errorEl.textContent = e.message;
+      errorEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Pay ₹199 & Book Slot';
+    }
+  };
 })();
 </script>
 </body>

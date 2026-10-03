@@ -33,3 +33,9 @@ After adding variables, click **Retry deployment** so the Functions pick them up
 2. Confirm the score renders and the email modal opens.
 3. Submit an email — confirm it lands in Brevo.
 4. Check GTM/Pixel events fire once (not twice) — this is where your "Once per page" trigger fix applies.
+
+## ₹199 audit checkout (Razorpay popup)
+- The four "Book Audit" buttons open an on-page form, then the Razorpay popup — no redirect to rzp.io.
+- Order creation + payment verification run in `audit-worker/worker.js` (separate Cloudflare Worker, `adcomp-audit-worker`). Secrets (`WC_CONSUMER_KEY`, `WC_CONSUMER_SECRET`, `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`) live in that Worker's dashboard settings, never in this repo.
+- The Worker's CORS allowlist includes `https://adcomp.xyz` and `https://speed.adcomp.xyz`. **Redeploy the Worker after merging** or the popup will fail silently on this subdomain.
+- After payment the visitor is redirected to `https://adcomp.xyz/website-audit-scheduler/` (absolute URL, still on WordPress).
