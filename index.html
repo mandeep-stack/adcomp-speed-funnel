@@ -1058,6 +1058,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
+                fbp: awGetCookie('_fbp'),
+                fbc: awGetCookie('_fbc'),
+                event_source_url: window.location.href,
               }),
             });
             var vJson = await vRes.json();

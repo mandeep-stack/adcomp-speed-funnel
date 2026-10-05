@@ -32,6 +32,10 @@ const ALLOWED_ORIGINS = ['https://adcomp.xyz', 'https://speed.adcomp.xyz'];
 const WC_SITE_URL = 'https://adcomp.xyz';
 const AUDIT_PRODUCT_ID = 996;
 
+// Meta Conversions API (server-side Purchase on verified payment)
+const META_PIXEL_ID = '797898887488783';
+const META_API_VERSION = 'v20.0';
+
 export default {
   async fetch(request, env, ctx) {
     const res = await route(request, env, ctx);
@@ -59,7 +63,7 @@ async function route(request, env, ctx) {
   const url = new URL(request.url);
 
   if (url.pathname === '/verify-payment') {
-    return handleVerifyPayment(request, env);
+    return handleVerifyPayment(request, env, ctx);
   }
   // Default: treat any other path (including just "/") as create-order.
   return handleCreateOrder(request, env);
@@ -208,7 +212,7 @@ async function handleCreateOrder(request, env) {
   }, 200);
 }
 
-async function handleVerifyPayment(request, env) {
+async function handleVerifyPayment(request, env, ctx) {
   let body;
   try {
     body = await request.json();
@@ -238,6 +242,12 @@ async function handleVerifyPayment(request, env) {
     await markOrderFailed(env, wcOrderId, 'Razorpay signature verification failed.');
     return corsResponse({ verified: false, error: 'Signature mismatch.' }, 400);
   }
+
+  // Payment is proven real: send the Purchase to Meta in the background.
+  // waitUntil keeps it off the response path, so it can never slow down or
+  // break the customer's redirect.
+  const metaTask = sendMetaPurchase(env, request, body, rzpOrderId, rzpPaymentId, wcOrderId);
+  if (ctx && typeof ctx.waitUntil === 'function') ctx.waitUntil(metaTask);
 
   // ── Mark the WooCommerce order paid ─────────────────────────────
   try {
@@ -272,6 +282,98 @@ async function handleVerifyPayment(request, env) {
     order_id: wcOrderId,
     redirect_url: redirectUrl,
   }, 200);
+}
+
+// Sends a server-side Purchase to Meta. Never throws: any failure is logged
+// and ignored so it cannot affect order handling.
+async function sendMetaPurchase(env, request, body, rzpOrderId, rzpPaymentId, wcOrderId) {
+  try {
+    if (!env.META_ACCESS_TOKEN) {
+      console.warn('[META PURCHASE] META_ACCESS_TOKEN not set — skipping');
+      return;
+    }
+
+    // Amount, email and phone come straight from Razorpay (the source of
+    // truth for what was actually charged), not from the browser.
+    const rzpAuth = 'Basic ' + btoa(`${env.RAZORPAY_KEY_ID}:${env.RAZORPAY_KEY_SECRET}`);
+    const payRes = await fetch(`https://api.razorpay.com/v1/payments/${encodeURIComponent(rzpPaymentId)}`, {
+      headers: { 'Authorization': rzpAuth },
+    });
+    const pay = await payRes.json();
+    if (!payRes.ok || !pay || !pay.amount || pay.status === 'failed') {
+      console.error('[META PURCHASE] Could not confirm payment with Razorpay', JSON.stringify(pay));
+      return;
+    }
+
+    const userData = {};
+    const email = String(pay.email || '').trim();
+    if (email) userData.em = [await sha256Hex(email)];
+
+    // Meta wants digits only, with country code (Indian numbers → 91…).
+    let phone = String(pay.contact || '').replace(/\D/g, '');
+    if (phone.length === 10) phone = '91' + phone;
+    if (phone) userData.ph = [await sha256Hex(phone)];
+
+    const fbp = String(body.fbp || '').slice(0, 200);
+    const fbc = String(body.fbc || '').slice(0, 300);
+    if (fbp) userData.fbp = fbp;
+    if (fbc) userData.fbc = fbc;
+
+    const ip = request.headers.get('CF-Connecting-IP') || '';
+    const ua = request.headers.get('User-Agent') || '';
+    if (ip) userData.client_ip_address = ip;
+    if (ua) userData.client_user_agent = ua;
+
+    const cf = request.cf || {};
+    if (cf.country)    userData.country = [await sha256Hex(cf.country)];
+    if (cf.region)     userData.st = [await sha256Hex(cf.region)];
+    if (cf.city)       userData.ct = [await sha256Hex(String(cf.city).replace(/\s+/g, ''))];
+    if (cf.postalCode) userData.zp = [await sha256Hex(cf.postalCode)];
+
+    const sourceUrl = /^https:\/\//i.test(String(body.event_source_url || ''))
+      ? String(body.event_source_url).slice(0, 500)
+      : 'https://speed.adcomp.xyz/';
+
+    const payload = {
+      data: [{
+        event_name: 'Purchase',
+        event_time: Math.floor(Date.now() / 1000),
+        // Razorpay payment id: unique per payment, so retries can't double count.
+        event_id: rzpPaymentId,
+        event_source_url: sourceUrl,
+        action_source: 'website',
+        user_data: userData,
+        custom_data: {
+          value: pay.amount / 100,
+          currency: pay.currency || 'INR',
+          content_type: 'product',
+          content_ids: [String(AUDIT_PRODUCT_ID)],
+          content_name: 'Website Audit Call',
+          num_items: 1,
+          order_id: String(wcOrderId),
+        },
+      }],
+    };
+    // Optional: set META_TEST_EVENT_CODE to see events in Events Manager → Test Events.
+    if (env.META_TEST_EVENT_CODE) payload.test_event_code = env.META_TEST_EVENT_CODE;
+
+    const metaRes = await fetch(
+      `https://graph.facebook.com/${META_API_VERSION}/${META_PIXEL_ID}/events?access_token=${env.META_ACCESS_TOKEN}`,
+      { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }
+    );
+    const metaData = await metaRes.json();
+    if (!metaRes.ok || metaData.error) console.error('[META PURCHASE ERROR]', JSON.stringify(metaData));
+    else console.log('[META PURCHASE OK] events_received:', metaData.events_received, 'payment:', rzpPaymentId);
+  } catch (e) {
+    console.error('[META PURCHASE FETCH ERROR]', e && e.message);
+  }
+}
+
+// Plain SHA-256 (lowercase, trimmed) as Meta requires for user data.
+async function sha256Hex(text) {
+  const data = new TextEncoder().encode(String(text).trim().toLowerCase());
+  const buf = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
 async function markOrderFailed(env, wcOrderId, note) {
