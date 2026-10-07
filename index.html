@@ -969,6 +969,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   // ── Instant popup checkout: button → small form → Razorpay popup ──
   window.awOpenAuditForm = function(e){
     if(e && e.preventDefault) e.preventDefault();
+    awTrack('book_audit_call', {});
     document.getElementById('awAuditError').style.display = 'none';
     document.getElementById('awAuditBackdrop').classList.add('show');
     document.body.style.overflow = 'hidden';
