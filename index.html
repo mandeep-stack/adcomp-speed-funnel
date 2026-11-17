@@ -437,6 +437,47 @@ html,body{margin:0;padding:0;background:#F7F6F3}
   #adcomp-ws .aw-sticky-cta span{display:none}
   #adcomp-ws .aw-sticky-cta a{width:100%;text-align:center}
 }
+/* ── CASE STUDIES (proof) ─────────────────────────── */
+#adcomp-ws .aw-proof-link{
+  display:block;width:100%;margin-top:12px;
+  background:var(--surface);color:var(--ink);
+  border:1px solid var(--border);border-radius:10px;
+  padding:13px 20px;font-size:14px;font-weight:700;
+  font-family:inherit;cursor:pointer;text-align:center;
+  transition:border-color .2s;
+}
+#adcomp-ws .aw-proof-link:hover{border-color:var(--ink3)}
+#adcomp-ws #aw-proof{scroll-margin-top:12px}
+#adcomp-ws .aw-cs-stage{position:relative;width:100%;aspect-ratio:16/9;background:var(--ink);border-radius:var(--r);overflow:hidden}
+#adcomp-ws .aw-cs-stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+#adcomp-ws .aw-cs-poster{position:absolute;inset:0;width:100%;height:100%;padding:0;margin:0;border:0;background:var(--ink);cursor:pointer;display:block}
+#adcomp-ws .aw-cs-poster img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+#adcomp-ws .aw-cs-play{position:absolute;left:50%;top:50%;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;background:#fff;box-shadow:0 6px 24px rgba(0,0,0,.3)}
+#adcomp-ws .aw-cs-play:after{content:"";position:absolute;left:25px;top:19px;border-style:solid;border-width:13px 0 13px 21px;border-color:transparent transparent transparent var(--ink)}
+#adcomp-ws .aw-cs-poster:focus-visible,#adcomp-ws .aw-cs-item:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+#adcomp-ws .aw-cs-info{padding:14px 0 6px}
+#adcomp-ws .aw-cs-title{font-size:19px;font-weight:800;letter-spacing:-.3px;line-height:1.25;margin:0 0 8px;color:var(--ink)}
+#adcomp-ws .aw-cs-result{display:inline-block;font-size:12px;font-weight:700;color:var(--green);background:var(--green-bg);border:1px solid var(--green-border);border-radius:999px;padding:4px 11px;margin:0}
+#adcomp-ws .aw-cs-result:empty{display:none}
+#adcomp-ws .aw-cs-head{display:flex;justify-content:space-between;margin:26px 0 10px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+#adcomp-ws .aw-cs-list{display:grid;gap:8px}
+#adcomp-ws .aw-cs-item{display:flex;gap:12px;align-items:center;width:100%;text-align:left;font:inherit;color:inherit;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:8px;cursor:pointer;transition:border-color .2s}
+#adcomp-ws .aw-cs-item:hover{border-color:var(--ink3)}
+#adcomp-ws .aw-cs-item[aria-current="true"]{border-color:var(--ink)}
+#adcomp-ws .aw-cs-th{position:relative;flex:0 0 112px;aspect-ratio:16/9;background:var(--ink);border-radius:8px;overflow:hidden}
+#adcomp-ws .aw-cs-th img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+#adcomp-ws .aw-cs-meta{min-width:0;display:flex;flex-direction:column;gap:3px}
+#adcomp-ws .aw-cs-it{font-size:14px;font-weight:700;line-height:1.3;color:var(--ink)}
+#adcomp-ws .aw-cs-ir{font-size:12px;color:var(--green);font-weight:600}
+#adcomp-ws .aw-cs-ir:empty{display:none}
+#adcomp-ws .aw-cs-now{display:none;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)}
+#adcomp-ws .aw-cs-item[aria-current="true"] .aw-cs-now{display:block}
+
+/* sticky bar: two buttons (proof + pay) */
+#adcomp-ws .aw-sticky-cta{gap:10px}
+#adcomp-ws .aw-sticky-cta a{flex:1 1 0;max-width:280px;width:auto;text-align:center;padding:12px 10px}
+#adcomp-ws .aw-sticky-cta .aw-sticky-alt{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4)}
+#adcomp-ws .aw-sticky-cta .aw-sticky-alt.aw-hide{display:none}
 </style>
 </head>
 <body>
@@ -469,6 +510,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
     <div class="aw-result" id="awResult"></div>
   </div>
+
+  <button type="button" class="aw-proof-link" id="awProofLink">Will it work for my site? &darr;</button>
 
   <!-- PROOF BAR -->
   <div class="aw-proof-bar">
@@ -680,6 +723,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <hr>
 
+<!-- CASE STUDIES -->
+<section id="aw-proof">
+  <span class="aw-eyebrow">Real results</span>
+  <h2 class="aw-h2">Will it work for your site?</h2>
+  <p class="aw-sub">Real websites. Real results. Pick one and watch.</p>
+  <div class="aw-cs-stage" id="awcs-stage"></div>
+  <div class="aw-cs-info" aria-live="polite">
+    <h3 class="aw-cs-title" id="awcs-title"></h3>
+    <p class="aw-cs-result" id="awcs-result"></p>
+  </div>
+  <div class="aw-cs-head"><span>All case studies</span><span id="awcs-count"></span></div>
+  <div class="aw-cs-list" id="awcs-list"></div>
+</section>
+
+<hr>
+
 <!-- FINAL CTA -->
 <div class="aw-cta">
   <h2 class="aw-h2">If your site is leaking revenue, we'll find where.</h2>
@@ -693,7 +752,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <div class="aw-sticky-spacer"></div>
 
 <div class="aw-sticky-cta">
-  <a href="https://rzp.io/rzp/webaudit" onclick="return awOpenAuditForm(event)">Book Audit Call — ₹199 →</a>
+  <a href="#aw-proof" class="aw-sticky-alt" id="awStickyProof">Will it work for me?</a>
+  <a href="https://rzp.io/rzp/webaudit" class="aw-sticky-pay" onclick="return awOpenAuditForm(event)">Book Audit — ₹199 &rarr;</a>
 </div>
 
 <!-- EMAIL MODAL -->
@@ -1095,6 +1155,96 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       btn.textContent = 'Pay ₹199 & Book Slot';
     }
   };
+})();
+</script>
+<script>
+(function(){
+  var LIB = '659110', CDN = 'vz-7e22ccfd-0a4.b-cdn.net';
+
+  /* Newest first. thumb = Bunny "Thumbnail URL" (or GUID/file). Fill in title, result (e.g. 'Mobile score 38 → 91') and len. */
+  var VIDEOS = [
+    { thumb:'https://vz-7e22ccfd-0a4.b-cdn.net/32269413-44f2-4245-bfdd-fbcdfc8de95c/thumbnail_453fa36c.jpg', title:'', result:'' },
+    { thumb:'83e08e1a-9aa8-4492-a834-3e5878e416f8/thumbnail_571bc302.jpg', title:'', result:'' },
+    { thumb:'3a93a286-9aea-4bc4-b731-580024a91735/thumbnail_3bda8808.jpg', title:'', result:'' },
+    { thumb:'/5ffbda5e-5df7-42c4-967e-d8023d598768/thumbnail_bf0373c7.jpg', title:'', result:'' },
+    { thumb:'4e72c9a2-4664-417c-a9a8-2232e54de809/thumbnail_ec23698c.jpg', title:'', result:'' },
+    { thumb:'9dd458b0-b1a0-4850-9f56-721b0474ca9d/thumbnail.jpg', title:'', result:'' }
+  ];
+
+  function $(id){ return document.getElementById(id); }
+  function esc(t){ var d=document.createElement('div'); d.textContent = t==null?'':String(t); return d.innerHTML; }
+  function parse(e){
+    e = String(e).trim();
+    var m = e.match(/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\/([^\/?#|]+)/i);
+    if(m) return { g:m[1], f:m[2] };
+    var p = e.split('|'); return { g:p[0], f:p[1] || 'thumbnail.jpg' };
+  }
+  var ERR = "if(!this.dataset.r){this.dataset.r=1;this.src=this.src.replace(/\\/[^\\/]+$/,'/thumbnail.jpg')}else{this.remove()}";
+  var stage = $('awcs-stage'), list = $('awcs-list');
+  if(!stage || !list) return;
+
+  var items = VIDEOS.map(function(v,i){
+    var P = parse(v.thumb);
+    return { i:i, g:P.g, f:P.f, title: v.title || ('Case study '+(i+1)), result: v.result || '' };
+  });
+  function thumb(it){ return 'https://'+CDN+'/'+encodeURIComponent(it.g)+'/'+it.f; }
+
+  $('awcs-count').textContent = items.length + (items.length === 1 ? ' video' : ' videos');
+  list.innerHTML = items.map(function(it){
+    return '<button type="button" class="aw-cs-item" data-i="'+it.i+'" aria-current="false">' +
+      '<span class="aw-cs-th"><img src="'+esc(thumb(it))+'" onerror="'+ERR+'" alt="" width="320" height="180" decoding="async" loading="lazy"></span>' +
+      '<span class="aw-cs-meta"><span class="aw-cs-it">'+esc(it.title)+'</span><span class="aw-cs-ir">'+esc(it.result)+'</span><span class="aw-cs-now">Now playing</span></span></button>';
+  }).join('');
+
+  var cur = -1;
+  function play(it){
+    var f = document.createElement('iframe');
+    f.src = 'https://iframe.mediadelivery.net/embed/'+encodeURIComponent(LIB)+'/'+encodeURIComponent(it.g)+'?autoplay=true&preload=true&responsive=true';
+    f.title = it.title;
+    f.setAttribute('allow','accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture');
+    f.setAttribute('allowfullscreen','');
+    stage.innerHTML = ''; stage.appendChild(f);
+  }
+  function show(i, autoplay){
+    var it = items[i]; if(!it) return;
+    cur = i;
+    stage.innerHTML = '<button type="button" class="aw-cs-poster" aria-label="Play: '+esc(it.title)+'">' +
+      '<img src="'+esc(thumb(it))+'" onerror="'+ERR+'" alt="" width="1280" height="720" decoding="async" loading="lazy"><span class="aw-cs-play"></span></button>';
+    $('awcs-title').textContent = it.title;
+    $('awcs-result').textContent = it.result;
+    Array.prototype.forEach.call(list.children, function(b){ b.setAttribute('aria-current', String(+b.getAttribute('data-i') === i)); });
+    if(autoplay) play(it);
+  }
+  stage.addEventListener('click', function(e){
+    if(e.target.closest && e.target.closest('.aw-cs-poster') && items[cur]) play(items[cur]);
+  });
+  list.addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('.aw-cs-item') : null;
+    if(!b) return;
+    show(+b.getAttribute('data-i'), true);
+    var r = stage.getBoundingClientRect();
+    if(r.top < 0 || r.bottom > window.innerHeight) stage.scrollIntoView({ behavior:'smooth', block:'center' });
+  });
+  show(0, false);
+
+  /* "Will it work for my site?" button: scroll to this section */
+  function goProof(e){
+    if(e && e.preventDefault) e.preventDefault();
+    var t = $('aw-proof'); if(!t) return;
+    var rm = window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches;
+    t.scrollIntoView({ behavior: rm ? 'auto' : 'smooth', block:'start' });
+  }
+  ['awProofLink','awStickyProof'].forEach(function(id){
+    var el = $(id); if(el) el.addEventListener('click', goProof);
+  });
+
+  /* hide the sticky "Will it work for me?" button while the case studies are on screen */
+  var alt = $('awStickyProof'), sec = $('aw-proof');
+  if(alt && sec && 'IntersectionObserver' in window){
+    new IntersectionObserver(function(en){
+      alt.classList.toggle('aw-hide', en[0].isIntersecting);
+    }, { threshold:.15 }).observe(sec);
+  }
 })();
 </script>
 </body>
